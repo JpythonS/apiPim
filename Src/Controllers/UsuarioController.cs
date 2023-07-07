@@ -48,7 +48,7 @@ public class UsuarioController : ControllerBase
         return Ok(result);
     }
 
-    // POST: api/usuarios
+    // POST: api/usuario
     [HttpPost]
     [Authorize]
     public IActionResult Create([FromBody] CreateUsuarioRequest request)
@@ -66,7 +66,7 @@ public class UsuarioController : ControllerBase
         return Created("", new { message = "usuario criado com sucesso" });
     }
 
-    // DELETE: api/users/{id}
+    // DELETE: api/usuario/{id}
     [HttpDelete("{id}")]
     [Authorize]
     public IActionResult Delete(int id)
