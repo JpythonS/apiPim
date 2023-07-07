@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using api_pim.Entities;
-using api_pim.Interfaces;
 using api_pim.Models;
 
 using AutoMapper;
@@ -15,13 +14,10 @@ public class FuncionarioController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
 
-    private IFuncionarioService _funcionarioService;
-
     private readonly IMapper _mapper;
 
-    public FuncionarioController(ApplicationDbContext context, IFuncionarioService funcionarioService, IMapper mapper)
+    public FuncionarioController(ApplicationDbContext context, IMapper mapper)
     {
-        _funcionarioService = funcionarioService;
         _context = context;
         _mapper = mapper;
     }

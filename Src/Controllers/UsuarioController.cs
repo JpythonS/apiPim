@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 
 using api_pim.Entities;
 using api_pim.Models;
-using api_pim.Interfaces;
 
 using AutoMapper;
 namespace api_pim.Controllers;
@@ -14,14 +13,11 @@ public class UsuarioController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
 
-    private readonly IUsuarioService _usuarioService;
-
     private readonly IMapper _mapper;
 
-    public UsuarioController(ApplicationDbContext context, IUsuarioService usuarioService, IMapper mapper)
+    public UsuarioController(ApplicationDbContext context, IMapper mapper)
     {
         _context = context;
-        _usuarioService = usuarioService;
         _mapper = mapper;
     }
 
