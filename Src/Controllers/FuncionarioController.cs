@@ -26,7 +26,7 @@ public class FuncionarioController : ControllerBase
         _mapper = mapper;
     }
 
-    // Rota GET: api/funcionarios
+    // Rota GET: api/funcionario
     [HttpGet]
     [Authorize]
     public IActionResult Get(string filtro = "")
