@@ -10,6 +10,7 @@ public class CreateFuncionarioRequest {
     public string? Sobrenome { get; set; }
 
     [Required]
+    [StringLength(11)]
     public string? Cpf { get; set; }
 
     [Required]
