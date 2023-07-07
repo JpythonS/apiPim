@@ -25,7 +25,7 @@ public class UsuarioController : ControllerBase
         _mapper = mapper;
     }
 
-    // Rota GET: api/usuarios
+    // Rota GET: api/usuario
     // params: filtro [string][optional] (filtra usuario por email)
     [HttpGet]
     [Authorize]
