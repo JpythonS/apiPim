@@ -1,0 +1,41 @@
+# Ignorar arquivos gerados pelo Visual Studio
+.vs/
+bin/
+obj/
+
+# Ignorar arquivos de dependências e pacotes NuGet
+**/nuget.config
+**/*.nuget.props
+**/*.nuget.targets
+**/packages/
+
+# Ignorar arquivos de compilação e publicação
+*.dll
+*.exe
+*.pdb
+*.zip
+*.xml
+
+# Ignorar arquivos gerados pelo MSBuild
+*.cache
+*.log
+msbuild.log
+
+# Ignorar arquivos de backup
+*~
+*.bak
+
+# Ignorar arquivos temporários
+*.tmp
+
+# Ignorar arquivos de configuração local
+appsettings.Development.json
+appsettings.Local.json
+
+# Ignorar arquivos de registro
+*.log
+*.log.*
+*.txt
+
+# Ignorar arquivos de teste
+TestResults/
