@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 using api_pim.Entities;
 using api_pim.Models;
+using api_pim.Exceptions;
+
+using System.Net;
 
 using AutoMapper;
 
@@ -16,10 +20,13 @@ public class FuncionarioController : ControllerBase
 
     private readonly IMapper _mapper;
 
-    public FuncionarioController(ApplicationDbContext context, IMapper mapper)
+    private readonly ILogger<FuncionarioController> _logger;
+
+    public FuncionarioController(ApplicationDbContext context, IMapper mapper, ILogger<FuncionarioController> logger)
     {
         _context = context;
         _mapper = mapper;
+        _logger = logger;
     }
 
     // Rota GET: api/funcionario
@@ -27,40 +34,48 @@ public class FuncionarioController : ControllerBase
     [Authorize]
     public IActionResult Get(string filtro = "")
     {
-        var funcionarios = _context.Funcionario.AsQueryable();
-
-        // implementar a opcao de concatenar filtros ou sempre fazer todos?
-        // ignorar acentos?
-
-        if (!string.IsNullOrEmpty(filtro))
+        try
         {
-            string filtroLowerCase = filtro.ToLower();
+            var funcionarios = _context.Funcionario.AsQueryable();
 
-            funcionarios = funcionarios
-             .Where(funcionario =>
-                funcionario.Nome.ToLower().Contains(filtroLowerCase) ||
-                funcionario.Sobrenome.ToLower().Contains(filtroLowerCase) || //juntar com nome
-                funcionario.Cpf.ToLower().Contains(filtroLowerCase) ||
-                funcionario.Salario_base.ToString().ToLower().Contains(filtroLowerCase) ||
-                funcionario.Jornada_trabalho_semanal.ToString().ToLower().Contains(filtroLowerCase) ||
-                funcionario.TipoCargo.Valor.ToLower().Contains(filtroLowerCase) ||
-                funcionario.Usuario.Email.ToLower().Contains(filtroLowerCase)
-             );
+            // implementar a opcao de concatenar filtros ou sempre fazer todos?
+            // ignorar acentos?
+
+            if (!string.IsNullOrEmpty(filtro))
+            {
+                string filtroLowerCase = filtro.ToLower();
+
+                funcionarios = funcionarios
+                 .Where(funcionario =>
+                    funcionario.Nome.ToLower().Contains(filtroLowerCase) ||
+                    funcionario.Sobrenome.ToLower().Contains(filtroLowerCase) || //juntar com nome
+                    funcionario.Cpf.ToLower().Contains(filtroLowerCase) ||
+                    funcionario.Salario_base.ToString().ToLower().Contains(filtroLowerCase) ||
+                    funcionario.Jornada_trabalho_semanal.ToString().ToLower().Contains(filtroLowerCase) ||
+                    funcionario.TipoCargo.Valor.ToLower().Contains(filtroLowerCase) ||
+                    funcionario.Usuario.Email.ToLower().Contains(filtroLowerCase)
+                 );
+            }
+
+            var result = funcionarios.Select(funcionario => new FuncionarioDto
+            {
+                Id = funcionario.Id,
+                Nome = funcionario.Nome,
+                Sobrenome = funcionario.Sobrenome,
+                Cpf = funcionario.Cpf,
+                Cargo = funcionario.TipoCargo.Valor,
+                SalarioBase = funcionario.Salario_base,
+                JornadaTrabalhoSemanal = funcionario.Jornada_trabalho_semanal,
+                Email = funcionario.Usuario.Email
+            }).ToList();
+            
+            _logger.LogInformation($"FuncionarioController.Create -> [Success]");
+            return Ok(result);
         }
-
-        var result = funcionarios.Select(funcionario => new FuncionarioDto
+        catch (Exception)
         {
-            Id = funcionario.Id,
-            Nome = funcionario.Nome,
-            Sobrenome = funcionario.Sobrenome,
-            Cpf = funcionario.Cpf,
-            Cargo = funcionario.TipoCargo.Valor,
-            SalarioBase = funcionario.Salario_base,
-            JornadaTrabalhoSemanal = funcionario.Jornada_trabalho_semanal,
-            Email = funcionario.Usuario.Email
-        }).ToList();
-
-        return Ok(result);
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GF}]");
+        }
     }
 
     // POST: api/funcionario
@@ -68,15 +83,23 @@ public class FuncionarioController : ControllerBase
     [Authorize]
     public IActionResult Create([FromBody] CreateFuncionarioRequest request)
     {
-        if (!ModelState.IsValid) {
-            return BadRequest(ModelState);
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Funcionario funcionario = _mapper.Map<Funcionario>(request);
+
+            _context.Funcionario.Add(funcionario);
+            _context.SaveChanges();
+
+            return Created("", new { message = $"Funcionario -> {funcionario.Nome} criado com sucesso" });
         }
-
-        Funcionario funcionario = _mapper.Map<Funcionario>(request);
-
-        _context.Funcionario.Add(funcionario);
-        _context.SaveChanges();
-
-        return Created("", new { message = $"Funcionario -> {funcionario.Nome} criado com sucesso" });
+        catch (Exception)
+        {
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CF}]");
+        }
     }
 }

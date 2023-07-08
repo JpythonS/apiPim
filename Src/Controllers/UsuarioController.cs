@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 
 using api_pim.Entities;
 using api_pim.Models;
+using api_pim.Exceptions;
 
 using AutoMapper;
+using System.Net;
+
 namespace api_pim.Controllers;
 
 [ApiController]
@@ -27,21 +30,28 @@ public class UsuarioController : ControllerBase
     [Authorize]
     public IActionResult Get(string filtro = "")
     {
-        var usuarios = _context.Usuario.AsQueryable();
-
-        if (!string.IsNullOrEmpty(filtro))
+        try
         {
-            usuarios = usuarios
-             .Where(u => u.Email.ToLower().Contains(filtro.ToLower()));
+            var usuarios = _context.Usuario.AsQueryable();
+
+            if (!string.IsNullOrEmpty(filtro))
+            {
+                usuarios = usuarios
+                 .Where(u => u.Email.ToLower().Contains(filtro.ToLower()));
+            }
+
+            List<UsuarioDto> result = usuarios.Select(u => new UsuarioDto
+            {
+                Email = u.Email,
+                Tipo = u.Tipo_usuario.Valor
+            }).ToList();
+
+            return Ok(result);
         }
-
-        List<UsuarioDto> result = usuarios.Select(u => new UsuarioDto
+        catch (Exception)
         {
-            Email = u.Email,
-            Tipo = u.Tipo_usuario.Valor
-        }).ToList();
-
-        return Ok(result);
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GU}]");
+        }
     }
 
     // POST: api/usuario
@@ -49,17 +59,24 @@ public class UsuarioController : ControllerBase
     [Authorize]
     public IActionResult Create([FromBody] CreateUsuarioRequest request)
     {
-        if (!ModelState.IsValid)
+        try
         {
-            return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Usuario usuario = _mapper.Map<Usuario>(request);
+
+            _context.Usuario.Add(usuario);
+            _context.SaveChanges();
+
+            return Created("", new { message = "usuario criado com sucesso" });
         }
-
-        Usuario usuario = _mapper.Map<Usuario>(request);
-
-        _context.Usuario.Add(usuario);
-        _context.SaveChanges();
-
-        return Created("", new { message = "usuario criado com sucesso" });
+        catch (Exception)
+        {
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CU}]");
+        }
     }
 
     // DELETE: api/usuario/{id}
@@ -67,16 +84,23 @@ public class UsuarioController : ControllerBase
     [Authorize]
     public IActionResult Delete(int id)
     {
-        var usuario = _context.Usuario.Find(id);
-
-        if (usuario == null)
+        try
         {
-            return NotFound("Usuário não encontrado.");
+            var usuario = _context.Usuario.Find(id);
+
+            if (usuario == null)
+            {
+                return NotFound("Usuário não encontrado.");
+            }
+
+            _context.Usuario.Remove(usuario);
+            _context.SaveChanges();
+
+            return Ok("Usuário excluído com sucesso.");
         }
-
-        _context.Usuario.Remove(usuario);
-        _context.SaveChanges();
-
-        return Ok("Usuário excluído com sucesso.");
+        catch (Exception)
+        {
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.DU}]");
+        }
     }
 }
