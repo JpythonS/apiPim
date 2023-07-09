@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using Microsoft.Extensions.Logging;
 
 using api_pim.Interfaces;
 using api_pim.Controllers;
@@ -19,11 +20,14 @@ namespace Tests
         private Mock<IAuthService> authServiceMock = null!;
         private AuthController authController = null!;
 
+        private Mock<ILogger<AuthController>> loggerMock = null!;
+
         [SetUp]
         public void Setup()
         {
             authServiceMock = new Mock<IAuthService>();
-            authController = new AuthController(authServiceMock.Object);
+            loggerMock = new Mock<ILogger<AuthController>>();
+            authController = new AuthController(authServiceMock.Object, loggerMock.Object);
         }
 
         [Test]

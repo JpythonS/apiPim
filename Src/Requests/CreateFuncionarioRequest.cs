@@ -24,7 +24,7 @@ public class CreateFuncionarioRequest {
 
     [Required]
     [EmailAddress]
-    public string? Usuario_id { get; set; }
+    public string? Usuario_email { get; set; }
 
     [Required]
     public int? Empresa_id { get; set; }

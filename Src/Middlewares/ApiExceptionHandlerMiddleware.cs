@@ -8,9 +8,12 @@ public class ApiExceptionHandlerMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public ApiExceptionHandlerMiddleware(RequestDelegate next)
+    private readonly ILogger<ApiExceptionHandlerMiddleware> _logger;
+
+    public ApiExceptionHandlerMiddleware(RequestDelegate next, ILogger<ApiExceptionHandlerMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task Invoke(HttpContext context)
@@ -31,7 +34,8 @@ public class ApiExceptionHandlerMiddleware
 
     private async Task HandleExceptionAsync(HttpContext context, ApiException ex)
     {
-        var result = JsonSerializer.Serialize(new { error = ex.Message });
+        _logger.LogError(ex.Message);
+        string result = JsonSerializer.Serialize(new { error = ex.Message });
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = ex.StatusCode;
         await context.Response.WriteAsync(result);
@@ -39,6 +43,7 @@ public class ApiExceptionHandlerMiddleware
 
     private async Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
+        _logger.LogError(ex.Message);
         var result = JsonSerializer.Serialize(new { error = "Ocorreu um erro interno no servidor." });
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

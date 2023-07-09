@@ -32,7 +32,7 @@ public class FuncionarioController : ControllerBase
     // Rota GET: api/funcionario
     [HttpGet]
     [Authorize]
-    public IActionResult Get(string filtro = "")
+    public IActionResult Get(string? filtro, int? empresa)
     {
         try
         {
@@ -40,6 +40,10 @@ public class FuncionarioController : ControllerBase
 
             // implementar a opcao de concatenar filtros ou sempre fazer todos?
             // ignorar acentos?
+
+            if (empresa != null) {
+                funcionarios = funcionarios.Where(funcionario => funcionario.Empresa.Id == empresa);
+            }
 
             if (!string.IsNullOrEmpty(filtro))
             {
@@ -66,14 +70,16 @@ public class FuncionarioController : ControllerBase
                 Cargo = funcionario.TipoCargo.Valor,
                 SalarioBase = funcionario.Salario_base,
                 JornadaTrabalhoSemanal = funcionario.Jornada_trabalho_semanal,
-                Email = funcionario.Usuario.Email
+                Email = funcionario.Usuario.Email,
+                Empresa = funcionario.Empresa.Nome
             }).ToList();
             
-            _logger.LogInformation($"FuncionarioController.Create -> [Success]");
+            _logger.LogInformation($"FuncionarioController.Get -> [Success]");
             return Ok(result);
         }
         catch (Exception)
         {
+            _logger.LogError("FuncionarioController.Get -> [Error]");
             throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GF}]");
         }
     }
@@ -90,15 +96,24 @@ public class FuncionarioController : ControllerBase
                 return BadRequest(ModelState);
             }
 
+            var user = _context.Usuario.FirstOrDefault(u => u.Email == request.Usuario_email);
+
+            if (user == null) {
+                throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CF}]");
+            }
+
             Funcionario funcionario = _mapper.Map<Funcionario>(request);
+            funcionario.Usuario_id = user.Id;
 
             _context.Funcionario.Add(funcionario);
             _context.SaveChanges();
-
+            
+            _logger.LogInformation("FuncionarioController.Create -> [Success]");
             return Created("", new { message = $"Funcionario -> {funcionario.Nome} criado com sucesso" });
         }
         catch (Exception)
         {
+            _logger.LogError("FuncionarioController.Create -> [Error]");
             throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CF}]");
         }
     }

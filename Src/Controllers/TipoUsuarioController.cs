@@ -9,7 +9,7 @@ using api_pim.Exceptions;
 namespace api_pim.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/tipo-usuario")]
 public class TipoUsuarioController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -24,18 +24,18 @@ public class TipoUsuarioController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public async Task<ActionResult<IEnumerable<TipoUsuario>>> Get()
+    public IActionResult Get()
     {
         try
         {
-            var result = await _context.TipoUsuario.ToListAsync();
+            var result = _context.TipoUsuario.ToList();
             _logger.LogInformation("TipoUsuarioController.Get -> [Success]");
-            return result;
+            return Ok(result);
         }
         catch (Exception)
         {
             _logger.LogError("TipoUsuarioController.Get -> [Error]");
-           throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CTU}]");
+           throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GTU}]");
         }
     }
 
@@ -58,8 +58,8 @@ public class TipoUsuarioController : ControllerBase
         }
         catch (Exception)
         {
-            _logger.LogError("TipoUsuarioController.Get -> [Error]");
-            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GTU}]");
+            _logger.LogError("TipoUsuarioController.Create -> [Error]");
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CTU}]");
         }
     }
 }

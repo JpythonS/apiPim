@@ -24,7 +24,7 @@ public class Funcionario {
     public double Jornada_trabalho_semanal {get; set;}
 
     [ForeignKey("Usuario")]
-    public string Usuario_id { get; set; } = string.Empty;
+    public int Usuario_id { get; set; }
 
     public Usuario Usuario { get; set; } = null!;
 

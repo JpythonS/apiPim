@@ -7,6 +7,5 @@ public struct FuncionarioDto {
     public double SalarioBase { get; set;}
     public double JornadaTrabalhoSemanal { get; set;}
     public string Email {get; set;}
-    
-    //public string Empresa {get;set;}
+    public string Empresa {get;set;}
 }

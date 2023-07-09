@@ -8,6 +8,7 @@ public class FuncionarioMappingProfile : Profile
 {
     public FuncionarioMappingProfile()
     {
-        CreateMap<CreateFuncionarioRequest, Funcionario>();
+        CreateMap<CreateFuncionarioRequest, Funcionario>()
+        .ForMember(dest => dest.Id, opt => opt.Ignore());
     }
 }

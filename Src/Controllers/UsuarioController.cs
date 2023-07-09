@@ -18,10 +18,13 @@ public class UsuarioController : ControllerBase
 
     private readonly IMapper _mapper;
 
-    public UsuarioController(ApplicationDbContext context, IMapper mapper)
+    private readonly ILogger<UsuarioController> _logger;
+
+    public UsuarioController(ApplicationDbContext context, IMapper mapper, ILogger<UsuarioController> logger)
     {
         _context = context;
         _mapper = mapper;
+        _logger = logger;
     }
 
     // Rota GET: api/usuario
@@ -45,18 +48,19 @@ public class UsuarioController : ControllerBase
                 Email = u.Email,
                 Tipo = u.Tipo_usuario.Valor
             }).ToList();
-
+            
+            _logger.LogInformation("UsuarioController.Get -> [Success]");
             return Ok(result);
         }
         catch (Exception)
         {
+            _logger.LogError("UsuarioController.Get -> [Error]");
             throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GU}]");
         }
     }
 
     // POST: api/usuario
     [HttpPost]
-    [Authorize]
     public IActionResult Create([FromBody] CreateUsuarioRequest request)
     {
         try
@@ -70,11 +74,12 @@ public class UsuarioController : ControllerBase
 
             _context.Usuario.Add(usuario);
             _context.SaveChanges();
-
+            _logger.LogInformation("UsuarioController.Create -> [Success]");
             return Created("", new { message = "usuario criado com sucesso" });
         }
         catch (Exception)
         {
+            _logger.LogError("UsuarioController.Create -> [Error]");
             throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CU}]");
         }
     }
@@ -96,10 +101,12 @@ public class UsuarioController : ControllerBase
             _context.Usuario.Remove(usuario);
             _context.SaveChanges();
 
+            _logger.LogInformation("UsuarioController.Delete -> [Success]");
             return Ok("Usuário excluído com sucesso.");
         }
         catch (Exception)
         {
+            _logger.LogError("UsuarioController.Delete -> [Error]");
             throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.DU}]");
         }
     }
