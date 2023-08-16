@@ -39,27 +39,27 @@ public class TipoUsuarioController : ControllerBase
         }
     }
 
-    [HttpPost]
-    [Authorize]
-    public IActionResult Create([FromBody] TipoUsuario request)
-    {
-        try
-        {
-            if (request == null)
-            {
-                return BadRequest(new { message = "Dados do tipo de usuário inválidos." });
-            }
+    // [HttpPost]
+    // [Authorize]
+    // public IActionResult Create([FromBody] TipoUsuario request)
+    // {
+    //     try
+    //     {
+    //         if (request == null)
+    //         {
+    //             return BadRequest(new { message = "Dados do tipo de usuário inválidos." });
+    //         }
 
-            _context.TipoUsuario.Add(request);
-            _context.SaveChanges();
-            _logger.LogInformation("TipoUsuarioController.Get -> [Success]");
+    //         _context.TipoUsuario.Add(request);
+    //         _context.SaveChanges();
+    //         _logger.LogInformation("TipoUsuarioController.Get -> [Success]");
             
-            return Ok($"Tipo de usuario [{request.Valor}] criado com sucesso");
-        }
-        catch (Exception)
-        {
-            _logger.LogError("TipoUsuarioController.Create -> [Error]");
-            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CTU}]");
-        }
-    }
+    //         return Ok($"Tipo de usuario [{request.Valor}] criado com sucesso");
+    //     }
+    //     catch (Exception)
+    //     {
+    //         _logger.LogError("TipoUsuarioController.Create -> [Error]");
+    //         throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CTU}]");
+    //     }
+    // }
 }

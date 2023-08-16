@@ -24,6 +24,12 @@ public class EmpresaController : ControllerBase {
         _context = context;
     }
 
+    [HttpGet]
+    public IActionResult Get() {
+        var empresa = _context.Empresa.ToList();
+        return Ok(empresa);
+    }
+
     [HttpPost]
     public IActionResult Create([FromBody] CreateEmpresaRequest request)
     {
@@ -44,7 +50,7 @@ public class EmpresaController : ControllerBase {
         catch (Exception)
         {
             _logger.LogError("EmpresaController.Create -> [Error]");
-            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CU}]");
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CE}]");
         }
     }
 }
