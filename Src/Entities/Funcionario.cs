@@ -38,5 +38,6 @@ public class Funcionario
     // public List<Adicional> Adicional { get; } = new();
 
     public ICollection<AdicionalFuncionario> AdicionalFuncionario { get; set;} = null!;
+    public ICollection<DescontoFuncionario> DescontoFuncionario { get; set;} = null!;
 
 }

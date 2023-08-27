@@ -15,7 +15,7 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<Empresa> Empresas { get; set; } = null!;
     public DbSet<Usuario> Usuarios { get; set; } = null!;
-    // public DbSet<Desconto> Desconto { get; set; } = null!;
+    public DbSet<Desconto> Descontos { get; set; } = null!;
     public DbSet<Adicional> Adicionais { get; set; } = null!;
     // public DbSet<Pagamento> Pagamento { get; set; } = null!;
     public DbSet<Funcionario> Funcionarios { get; set; } = null!;

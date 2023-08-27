@@ -9,7 +9,7 @@ using api_pim.Exceptions;
 namespace api_pim.Controllers;
 
 [ApiController]
-[Route("api/tipo-cargo")]
+[Route("api/[controller]")]
 public class TipoCargoController : ControllerBase
 {
     private readonly ApplicationDbContext _context;
