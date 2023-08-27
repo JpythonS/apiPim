@@ -7,10 +7,12 @@ public enum ErrorCode {
     CTU,
     CU,
     DTC,
+    DTA,
     DU,
     GF,
     GABI,
     GTC,
+    GTA,
     GTU,
     GU,
 }
