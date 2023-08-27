@@ -7,25 +7,25 @@ public class CreateFuncionarioRequest {
     public string? Nome { get; set; }
 
     [Required]
-    public string? Sobrenome { get; set; }
+    public string? Endereco { get; set; }
 
     [Required]
     [StringLength(11)]
     public string? Cpf { get; set; }
 
     [Required]
-    public int? Tipo_cargo_cod { get; set; }
+    public int? TipoCargoCod { get; set; }
 
     [Required]
-    public double? Salario_base { get; set; }
+    public double? SalarioBase { get; set; }
 
     [Required]
-    public double? Jornada_trabalho_semanal {get; set;}
+    public double? JornadaTrabalhoSemanal {get; set;}
 
     [Required]
     [EmailAddress]
-    public string? Usuario_email { get; set; }
+    public string? UsuarioEmail { get; set; }
 
     [Required]
-    public int? Empresa_id { get; set; }
+    public int? EmpresaId { get; set; }
 }

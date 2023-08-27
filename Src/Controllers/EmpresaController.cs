@@ -25,12 +25,14 @@ public class EmpresaController : ControllerBase {
     }
 
     [HttpGet]
+    [Authorize]
     public IActionResult Get() {
-        var empresa = _context.Empresa.ToList();
+        var empresa = _context.Empresas.ToList();
         return Ok(empresa);
     }
 
     [HttpPost]
+    [Authorize]
     public IActionResult Create([FromBody] CreateEmpresaRequest request)
     {
         try
@@ -42,7 +44,7 @@ public class EmpresaController : ControllerBase {
 
             Empresa empresa = _mapper.Map<Empresa>(request);
 
-            _context.Empresa.Add(empresa);
+            _context.Empresas.Add(empresa);
             _context.SaveChanges();
             _logger.LogInformation("EmpresaController.Create -> [Success]");
             return Created("", new { message = $"Empresa [{request.Nome}] criada com sucesso" });

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 public class CreateUsuarioRequest {
     [Required]
-    public int? Tipo_usuario_cod { get; set; }
+    public int? TipoUsuarioCod { get; set; }
 
     [Required]
     [EmailAddress]

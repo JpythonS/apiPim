@@ -35,7 +35,7 @@ public class UsuarioController : ControllerBase
     {
         try
         {
-            var usuarios = _context.Usuario.AsQueryable();
+            var usuarios = _context.Usuarios.AsQueryable();
 
             if (!string.IsNullOrEmpty(filtro))
             {
@@ -46,7 +46,7 @@ public class UsuarioController : ControllerBase
             List<UsuarioDto> result = usuarios.Select(u => new UsuarioDto
             {
                 Email = u.Email,
-                Tipo = u.Tipo_usuario.Valor
+                Tipo = u.TipoUsuario.Valor
             }).ToList();
             
             _logger.LogInformation("UsuarioController.Get -> [Success]");
@@ -72,7 +72,7 @@ public class UsuarioController : ControllerBase
 
             Usuario usuario = _mapper.Map<Usuario>(request);
 
-            _context.Usuario.Add(usuario);
+            _context.Usuarios.Add(usuario);
             _context.SaveChanges();
             _logger.LogInformation("UsuarioController.Create -> [Success]");
             return Created("", new { message = "usuario criado com sucesso" });
@@ -91,14 +91,14 @@ public class UsuarioController : ControllerBase
     {
         try
         {
-            var usuario = _context.Usuario.Find(id);
+            var usuario = _context.Usuarios.Find(id);
 
             if (usuario == null)
             {
                 return NotFound("Usuário não encontrado.");
             }
 
-            _context.Usuario.Remove(usuario);
+            _context.Usuarios.Remove(usuario);
             _context.SaveChanges();
 
             _logger.LogInformation("UsuarioController.Delete -> [Success]");

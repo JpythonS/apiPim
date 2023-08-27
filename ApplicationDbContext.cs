@@ -10,10 +10,29 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<TipoUsuario> TipoUsuario { get; set; } = null!;
     public DbSet<TipoCargo> TipoCargo { get; set; } = null!;
+    public DbSet<TipoDesconto> TipoDesconto { get; set; } = null!;
+    public DbSet<TipoAdicional> TipoAdicional { get; set; } = null!;
 
-    public DbSet<Empresa> Empresa { get; set; } = null!;
+    public DbSet<Empresa> Empresas { get; set; } = null!;
+    public DbSet<Usuario> Usuarios { get; set; } = null!;
+    // public DbSet<Desconto> Desconto { get; set; } = null!;
+    public DbSet<Adicional> Adicionais { get; set; } = null!;
+    // public DbSet<Pagamento> Pagamento { get; set; } = null!;
+    public DbSet<Funcionario> Funcionarios { get; set; } = null!;
+    public DbSet<AdicionalFuncionario> AdicionalFuncionario { get; set; } = null!;
 
-    public DbSet<Usuario> Usuario { get; set; } = null!;
-    public DbSet<Funcionario> Funcionario { get; set; } = null!;
-    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // modelBuilder.Entity<AdicionalFuncionario>()
+        //     .HasOne(fa => fa.Funcionario)
+        //     .WithMany(f => f.AdicionalFuncionario)
+        //     .HasForeignKey(fa => fa.Funcionario_id);
+
+        // modelBuilder.Entity<AdicionalFuncionario>()
+        //     .HasOne(fa => fa.Adicional)
+        //     .WithMany(a => a.AdicionalFuncionario)
+        //     .HasForeignKey(fa => fa.Adicional_id);
+
+        // ... outras configurações ...
+    }
 }

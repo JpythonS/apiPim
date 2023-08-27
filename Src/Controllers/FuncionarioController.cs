@@ -36,7 +36,7 @@ public class FuncionarioController : ControllerBase
     {
         try
         {
-            var funcionarios = _context.Funcionario.AsQueryable();
+            var funcionarios = _context.Funcionarios.AsQueryable();
 
             // implementar a opcao de concatenar filtros ou sempre fazer todos?
             // ignorar acentos?
@@ -51,11 +51,11 @@ public class FuncionarioController : ControllerBase
 
                 funcionarios = funcionarios
                  .Where(funcionario =>
-                    funcionario.Nome.ToLower().Contains(filtroLowerCase) ||
-                    funcionario.Sobrenome.ToLower().Contains(filtroLowerCase) || //juntar com nome
+                    funcionario.NomeCompleto.ToLower().Contains(filtroLowerCase) ||
+                    funcionario.Endereco.ToLower().Contains(filtroLowerCase) ||
                     funcionario.Cpf.ToLower().Contains(filtroLowerCase) ||
-                    funcionario.Salario_base.ToString().ToLower().Contains(filtroLowerCase) ||
-                    funcionario.Jornada_trabalho_semanal.ToString().ToLower().Contains(filtroLowerCase) ||
+                    funcionario.SalarioBase.ToString().ToLower().Contains(filtroLowerCase) ||
+                    funcionario.JornadaTrabalhoSemanal.ToString().ToLower().Contains(filtroLowerCase) ||
                     funcionario.TipoCargo.Valor.ToLower().Contains(filtroLowerCase) ||
                     funcionario.Usuario.Email.ToLower().Contains(filtroLowerCase)
                  );
@@ -64,12 +64,12 @@ public class FuncionarioController : ControllerBase
             var result = funcionarios.Select(funcionario => new FuncionarioDto
             {
                 Id = funcionario.Id,
-                Nome = funcionario.Nome,
-                Sobrenome = funcionario.Sobrenome,
+                Nome = funcionario.NomeCompleto,
                 Cpf = funcionario.Cpf,
                 Cargo = funcionario.TipoCargo.Valor,
-                SalarioBase = funcionario.Salario_base,
-                JornadaTrabalhoSemanal = funcionario.Jornada_trabalho_semanal,
+                Endereco = funcionario.Endereco,
+                SalarioBase = funcionario.SalarioBase,
+                JornadaTrabalhoSemanal = funcionario.JornadaTrabalhoSemanal,
                 Email = funcionario.Usuario.Email,
                 Empresa = funcionario.Empresa.Nome
             }).ToList();
@@ -96,20 +96,20 @@ public class FuncionarioController : ControllerBase
                 return BadRequest(ModelState);
             }
 
-            var user = _context.Usuario.FirstOrDefault(u => u.Email == request.Usuario_email);
+            var user = _context.Usuarios.FirstOrDefault(u => u.Email == request.UsuarioEmail);
 
             if (user == null) {
-                throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CF}]");
+                throw new ApiException((int)HttpStatusCode.InternalServerError, $"Usuario não encontrado [{ErrorCode.CF}]");
             }
 
             Funcionario funcionario = _mapper.Map<Funcionario>(request);
-            funcionario.Usuario_id = user.Id;
+            funcionario.UsuarioId = user.Id;
 
-            _context.Funcionario.Add(funcionario);
+            _context.Funcionarios.Add(funcionario);
             _context.SaveChanges();
             
             _logger.LogInformation("FuncionarioController.Create -> [Success]");
-            return Created("", new { message = $"Funcionario -> {funcionario.Nome} criado com sucesso" });
+            return Created("", new { message = $"Funcionario -> {funcionario.NomeCompleto} criado com sucesso" });
         }
         catch (Exception)
         {

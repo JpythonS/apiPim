@@ -1,5 +1,6 @@
 public enum ErrorCode {
     AS,
+    CA,
     CE,
     CF,
     CTC,
@@ -8,6 +9,7 @@ public enum ErrorCode {
     DTC,
     DU,
     GF,
+    GABI,
     GTC,
     GTU,
     GU,

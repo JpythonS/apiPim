@@ -3,33 +3,40 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace api_pim.Entities;
 
-public class Funcionario {
+public class Funcionario
+{
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; } 
+    public int Id { get; set; }
 
-    public string Nome { get; set; } = string.Empty;
+    public string NomeCompleto { get; set; } = string.Empty;
 
-    public string Sobrenome { get; set; } = string.Empty; 
+    public string Endereco { get; set; } = string.Empty;
 
     public string Cpf { get; set; } = string.Empty;
 
     [ForeignKey("TipoCargo")]
-    public int Tipo_cargo_cod { get; set; }
+    public int TipoCargoCod { get; set; }
 
     public TipoCargo TipoCargo { get; set; } = null!;
 
-    public double Salario_base { get; set; }
+    public double SalarioBase { get; set; }
 
-    public double Jornada_trabalho_semanal {get; set;}
+    public double JornadaTrabalhoSemanal { get; set; }
 
     [ForeignKey("Usuario")]
-    public int Usuario_id { get; set; }
+    public int UsuarioId { get; set; }
 
     public Usuario Usuario { get; set; } = null!;
 
     [ForeignKey("Empresa")]
-    public int Empresa_id { get; set; }
+    public int EmpresaId { get; set; }
 
     public Empresa Empresa { get; set; } = null!;
+
+    // public ICollection<Desconto> Descontos { get; set; } = new List<Desconto>();
+    // public List<Adicional> Adicional { get; } = new();
+
+    public ICollection<AdicionalFuncionario> AdicionalFuncionario { get; set;} = null!;
+
 }

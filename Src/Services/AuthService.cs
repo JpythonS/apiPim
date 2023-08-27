@@ -24,7 +24,7 @@ public class AuthService : IAuthService
     {
         try
         {
-            var usuario = _context.Usuario.SingleOrDefault(u => u.Email == email && u.Senha == senha);
+            var usuario = _context.Usuarios.SingleOrDefault(u => u.Email == email && u.Senha == senha);
 
             if (usuario == null)
             {

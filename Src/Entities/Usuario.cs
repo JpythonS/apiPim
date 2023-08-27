@@ -10,8 +10,8 @@ public class Usuario
     public int Id { get; set; }
 
     [ForeignKey("Tipo_usuario")]
-    public int Tipo_usuario_cod { get; set; }
-    public TipoUsuario Tipo_usuario { get; set; } = null!;
+    public int TipoUsuarioCod { get; set; }
+    public TipoUsuario TipoUsuario { get; set; } = null!;
     
     public string Email { get; set; } = string.Empty;
     public string Senha { get; set; } = string.Empty;
