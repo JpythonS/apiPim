@@ -17,22 +17,12 @@ public class ApplicationDbContext : DbContext
     public DbSet<Usuario> Usuarios { get; set; } = null!;
     public DbSet<Desconto> Descontos { get; set; } = null!;
     public DbSet<Adicional> Adicionais { get; set; } = null!;
-    // public DbSet<Pagamento> Pagamento { get; set; } = null!;
+    public DbSet<Pagamento> Pagamento { get; set; } = null!;
     public DbSet<Funcionario> Funcionarios { get; set; } = null!;
+
+    public DbSet<AdicionalPagamento> AdicionalPagamento { get; set; } = null!;
     public DbSet<AdicionalFuncionario> AdicionalFuncionario { get; set; } = null!;
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        // modelBuilder.Entity<AdicionalFuncionario>()
-        //     .HasOne(fa => fa.Funcionario)
-        //     .WithMany(f => f.AdicionalFuncionario)
-        //     .HasForeignKey(fa => fa.Funcionario_id);
-
-        // modelBuilder.Entity<AdicionalFuncionario>()
-        //     .HasOne(fa => fa.Adicional)
-        //     .WithMany(a => a.AdicionalFuncionario)
-        //     .HasForeignKey(fa => fa.Adicional_id);
-
-        // ... outras configurações ...
-    }
+    public DbSet<DescontoPagamento> DescontoPagamento { get; set; } = null!;
+    public DbSet<DescontoFuncionario> DescontoFuncionario { get; set; } = null!;
 }

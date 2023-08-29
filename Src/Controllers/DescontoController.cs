@@ -30,8 +30,8 @@ public class DescontoController : ControllerBase
     [HttpGet]
     public IActionResult Get()
     {
-        var adicionais = _context.Adicionais.ToList();
-        return Ok(adicionais);
+        var descontos = _context.Descontos.ToList();
+        return Ok(descontos);
     }
 
     [HttpGet("{id}")]
@@ -49,9 +49,9 @@ public class DescontoController : ControllerBase
                 return NotFound();
             }
 
-            var adicionais = funcionario.DescontoFuncionario.Select(fa => fa.Desconto);
+            var descontos = funcionario.DescontoFuncionario.Select(fa => fa.Desconto);
 
-            return Ok(adicionais);
+            return Ok(descontos);
 
         }
         catch (Exception)

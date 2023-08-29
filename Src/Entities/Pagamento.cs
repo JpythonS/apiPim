@@ -17,6 +17,6 @@ public class Pagamento
 
     public Funcionario Funcionario { get; set; } = null!;
 
-    public ICollection<Desconto> Descontos { get; set; } = new List<Desconto>();
-    public ICollection<Adicional> Adicionais { get; set; } = new List<Adicional>();
+    public ICollection<AdicionalPagamento> AdicionalPagamento { get; set;} = null!;
+    // public ICollection<DescontoPagamento> DescontoPagamento { get; set;} = null!;
 }
