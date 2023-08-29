@@ -5,6 +5,7 @@ public enum ErrorCode {
     CF,
     CTC,
     CTD,
+    CTP,
     CTU,
     CU,
     DTC,

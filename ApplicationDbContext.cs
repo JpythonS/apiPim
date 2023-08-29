@@ -12,6 +12,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<TipoCargo> TipoCargo { get; set; } = null!;
     public DbSet<TipoDesconto> TipoDesconto { get; set; } = null!;
     public DbSet<TipoAdicional> TipoAdicional { get; set; } = null!;
+    public DbSet<TipoPagamento> TipoPagamento { get; set; } = null!;
 
     public DbSet<Empresa> Empresas { get; set; } = null!;
     public DbSet<Usuario> Usuarios { get; set; } = null!;
