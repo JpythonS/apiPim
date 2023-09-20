@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 using api_pim.Entities;
 using api_pim.Models;
 using api_pim.Exceptions;
 
-using System.Net;
-
 using AutoMapper;
+using System.Net;
 
 namespace api_pim.Controllers;
 
@@ -27,5 +26,33 @@ public class PagamentoController : ControllerBase
         _context = context;
         _mapper = mapper;
         _logger = logger;
+    }
+
+    [HttpGet("{id}")]
+    public IActionResult GetByFuncionarioId(int id)
+    {
+        try
+        {
+            var funcionario = _context.Funcionarios
+            .Include(f => f.AdicionalFuncionario)
+            .ThenInclude(f => f.Adicional)
+            .Include(f => f.DescontoFuncionario)
+            .ThenInclude(f => f.Desconto)
+            .FirstOrDefault(f => f.Id == id);
+
+            if (funcionario == null)
+            {
+                return NotFound();
+            }
+
+
+            return Ok(funcionario);
+
+        }
+        catch (Exception)
+        {
+            _logger.LogError("FuncionarioController.Get -> [Error]");
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GABI}]");
+        }
     }
 }

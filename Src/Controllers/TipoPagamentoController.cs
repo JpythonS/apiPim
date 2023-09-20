@@ -30,7 +30,7 @@ public class TipoPagamentoController : ControllerBase
         {
             if (request == null)
             {
-                return BadRequest(new { message = "Dados do tipo de pagamento inv�lidos." });
+                return BadRequest(new { message = "Dados do tipo de pagamento inválidos." });
             }
 
             _context.TipoPagamento.Add(request);

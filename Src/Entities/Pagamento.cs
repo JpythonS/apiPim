@@ -18,5 +18,5 @@ public class Pagamento
     public Funcionario Funcionario { get; set; } = null!;
 
     public ICollection<AdicionalPagamento> AdicionalPagamento { get; set;} = null!;
-    // public ICollection<DescontoPagamento> DescontoPagamento { get; set;} = null!;
+    public ICollection<DescontoPagamento> DescontoPagamento { get; set;} = null!;
 }
