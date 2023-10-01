@@ -35,31 +35,54 @@ public class TipoUsuarioController : ControllerBase
         catch (Exception)
         {
             _logger.LogError("TipoUsuarioController.Get -> [Error]");
-           throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GTU}]");
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GTU}]");
         }
     }
 
-    // [HttpPost]
-    // [Authorize]
-    // public IActionResult Create([FromBody] TipoUsuario request)
-    // {
-    //     try
-    //     {
-    //         if (request == null)
-    //         {
-    //             return BadRequest(new { message = "Dados do tipo de usuário inválidos." });
-    //         }
+    [HttpPost]
+    [Authorize]
+    public IActionResult Create([FromBody] TipoUsuario request)
+    {
+        try
+        {
+            if (request == null)
+            {
+                return BadRequest(new { message = "Dados do tipo de usuário inválidos." });
+            }
 
-    //         _context.TipoUsuario.Add(request);
-    //         _context.SaveChanges();
-    //         _logger.LogInformation("TipoUsuarioController.Get -> [Success]");
-            
-    //         return Ok($"Tipo de usuario [{request.Valor}] criado com sucesso");
-    //     }
-    //     catch (Exception)
-    //     {
-    //         _logger.LogError("TipoUsuarioController.Create -> [Error]");
-    //         throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CTU}]");
-    //     }
-    // }
+            _context.TipoUsuario.Add(request);
+            _context.SaveChanges();
+            _logger.LogInformation("TipoUsuarioController.Get -> [Success]");
+
+            return Ok($"Tipo de usuário [{request.Valor}] criado com sucesso");
+        }
+        catch (Exception)
+        {
+            _logger.LogError("TipoUsuarioController.Create -> [Error]");
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CTU}]");
+        }
+    }
+
+    [HttpDelete]
+    [Authorize]
+    public IActionResult Delete(int cod)
+    {
+        try
+        {
+            var tipoUsuario = _context.TipoUsuario.FirstOrDefault(td => td.Cod == cod);
+            if (tipoUsuario == null)
+            {
+                return NotFound(new { message = "Tipo de usuário não encontrado" });
+            }
+
+            _context.TipoUsuario.Remove(tipoUsuario);
+            _context.SaveChanges();
+            return NoContent();
+        }
+        catch (Exception)
+        {
+            _logger.LogError("TipoUsuarioController.Create -> [Error]");
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.DTD}]");
+        }
+    }
 }
