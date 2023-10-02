@@ -11,9 +11,34 @@ public class Funcionario
 
     public string NomeCompleto { get; set; } = string.Empty;
 
+    public DateTime DataNascimento {get; set; }
+    public string Cpf { get; set; } = string.Empty;
+
+    public string Rg { get; set; } = string.Empty;
+
+    public string Celular { get; set; } = string.Empty;
+
+    public string CelularContatoEmergencia { get; set; } = string.Empty;
+
     public string Endereco { get; set; } = string.Empty;
 
-    public string Cpf { get; set; } = string.Empty;
+    public string Bairro { get; set; } = string.Empty;
+
+    public string Cidade { get; set; } = string.Empty;
+
+    public string Estado { get; set; } = string.Empty;
+
+    public string Pis { get; set; } = string.Empty;
+
+    public string AgenciaBancaria { get; set; } = string.Empty;
+
+    public string DigitoAgencia { get; set; } = string.Empty;
+
+    public string ContaBancaria { get; set; } = string.Empty;
+
+    public string DigitoConta { get; set; } = string.Empty;
+
+    public string Banco { get; set; } = string.Empty;
 
     [ForeignKey("TipoCargo")]
     public int TipoCargoCod { get; set; }
