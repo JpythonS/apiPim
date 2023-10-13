@@ -7,5 +7,5 @@ public class CreateEmpresaRequest {
     public string? Nome { get; set; }
 
     [Required]
-    public string? CpfCnpj { get; set; }
+    public string? Cnpj { get; set; }
 }

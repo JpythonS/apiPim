@@ -96,8 +96,21 @@ public class FuncionarioController : ControllerBase
                 return BadRequest(ModelState);
             }
 
-            var user = _context.Usuarios.FirstOrDefault(u => u.Email == request.UsuarioEmail);
 
+            CreateUsuarioRequest createUsuarioRequest = new()
+            {
+                Email = request.UsuarioEmail,
+                Senha = request.Cpf,
+                TipoUsuarioCod = 1
+            };
+            
+            Usuario usuario = _mapper.Map<Usuario>(createUsuarioRequest);
+
+            _context.Usuarios.Add(usuario);
+            _context.SaveChanges();
+
+            var user = _context.Usuarios.FirstOrDefault(u => u.Email == request.UsuarioEmail);
+            
             if (user == null) {
                 throw new ApiException((int)HttpStatusCode.InternalServerError, $"Usuario não encontrado [{ErrorCode.CF}]");
             }

@@ -8,7 +8,7 @@ public class Empresa {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id {get; set;}
     public string Nome {get; set;} = string.Empty;
-    public string CpfCnpj {get; set;} = string.Empty;
+    public string Cnpj {get; set;} = string.Empty;
 
     // public ICollection<Funcionario> funcionarios {get; set;} = null!;
 }
