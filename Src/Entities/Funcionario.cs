@@ -30,15 +30,15 @@ public class Funcionario
 
     public string Pis { get; set; } = string.Empty;
 
-    public string AgenciaBancaria { get; set; } = string.Empty;
+    public string? AgenciaBancaria { get; set; } = string.Empty;
 
-    public string DigitoAgencia { get; set; } = string.Empty;
+    public string? DigitoAgencia { get; set; } = string.Empty;
 
-    public string ContaBancaria { get; set; } = string.Empty;
+    public string? ContaBancaria { get; set; } = string.Empty;
 
-    public string DigitoConta { get; set; } = string.Empty;
+    public string? DigitoConta { get; set; } = string.Empty;
 
-    public string Banco { get; set; } = string.Empty;
+    public string? Banco { get; set; } = string.Empty;
 
     [ForeignKey("TipoCargo")]
     public int TipoCargoCod { get; set; }

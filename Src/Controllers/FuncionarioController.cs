@@ -30,6 +30,31 @@ public class FuncionarioController : ControllerBase
         _logger = logger;
     }
 
+    [HttpDelete("{id}")]
+    [Authorize]
+    public IActionResult DeleteById(int id)
+    {
+        try
+        {
+            var funcionario = _context.Funcionarios.Find(id);
+
+            if (funcionario == null)
+            {
+                return NotFound("Funcionário não encontrado.");
+            }
+
+            _context.Funcionarios.Remove(funcionario);
+            _context.SaveChanges();
+
+            return Ok($"Funcionário com ID {id} excluído com sucesso.");
+        }
+        catch (Exception)
+        {
+            _logger.LogError("FuncionarioController.Get -> [Error]");
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GF}]");
+        }
+    }
+
     // Rota GET: api/funcionario
     [HttpGet]
     [Authorize]
