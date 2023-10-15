@@ -9,6 +9,7 @@ using api_pim.Exceptions;
 using System.Net;
 
 using AutoMapper;
+using System.Numerics;
 
 namespace api_pim.Controllers;
 
@@ -32,7 +33,7 @@ public class FuncionarioController : ControllerBase
     // Rota GET: api/funcionario
     [HttpGet]
     [Authorize]
-    public IActionResult Get(string? filtro, int? empresa)
+    public IActionResult Get(string? filtro, int? empresa, int? id)
     {
         try
         {
@@ -41,7 +42,14 @@ public class FuncionarioController : ControllerBase
             // implementar a opcao de concatenar filtros ou sempre fazer todos?
             // ignorar acentos?
 
-            if (empresa != null) {
+
+            if (id != null)
+            {
+                funcionarios = funcionarios.Where(funcionario => funcionario.Id == id);
+            }
+
+            if (empresa != null)
+            {
                 funcionarios = funcionarios.Where(funcionario => funcionario.Empresa.Id == empresa);
             }
 
@@ -73,7 +81,7 @@ public class FuncionarioController : ControllerBase
                 Email = funcionario.Usuario.Email,
                 Empresa = funcionario.Empresa.Nome
             }).ToList();
-            
+
             _logger.LogInformation($"FuncionarioController.Get -> [Success]");
             return Ok(result);
         }
@@ -103,15 +111,16 @@ public class FuncionarioController : ControllerBase
                 Senha = request.Cpf,
                 TipoUsuarioCod = 1
             };
-            
+
             Usuario usuario = _mapper.Map<Usuario>(createUsuarioRequest);
 
             _context.Usuarios.Add(usuario);
             _context.SaveChanges();
 
             var user = _context.Usuarios.FirstOrDefault(u => u.Email == request.UsuarioEmail);
-            
-            if (user == null) {
+
+            if (user == null)
+            {
                 throw new ApiException((int)HttpStatusCode.InternalServerError, $"Usuario não encontrado [{ErrorCode.CF}]");
             }
 
@@ -120,7 +129,7 @@ public class FuncionarioController : ControllerBase
 
             _context.Funcionarios.Add(funcionario);
             _context.SaveChanges();
-            
+
             _logger.LogInformation("FuncionarioController.Create -> [Success]");
             return Created("", new { message = $"Funcionario -> {funcionario.NomeCompleto} criado com sucesso" });
         }
