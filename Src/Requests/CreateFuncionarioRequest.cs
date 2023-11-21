@@ -7,7 +7,7 @@ public class CreateFuncionarioRequest
     [Required]
     public string? NomeCompleto { get; set; }
 
-    public DateTime DataNascimento { get; set; }
+    public DateTime? DataNascimento { get; set; }
 
     [Required]
     public string? Endereco { get; set; }

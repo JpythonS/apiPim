@@ -42,6 +42,7 @@ public class DescontoController : ControllerBase
             var funcionario = _context.Funcionarios
             .Include(f => f.DescontoFuncionario)
             .ThenInclude(f => f.Desconto)
+            .ThenInclude(f => f.TipoDesconto)
             .FirstOrDefault(f => f.Id == id);
 
             if (funcionario == null)
@@ -85,4 +86,50 @@ public class DescontoController : ControllerBase
             throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CA}]");
         }
     }
+
+    [HttpPost("inserir-descontos")]
+    public IActionResult InserirDescontos()
+    {
+        RemoverDescontosINSSDeTodosFuncionarios();
+        InserirDescontosINSSDeTodosFuncionarios();
+        return Ok("Descontos inseridos com sucesso!");
+    }
+
+    private void InserirDescontosINSSDeTodosFuncionarios()
+    {
+        List<Funcionario> funcionarios = _context.Funcionarios.Include(f => f.TipoCargo).ToList();
+
+        foreach (Funcionario funcionario in funcionarios)
+        {
+            double inssCalculado = _context.CalcularDesconto(funcionario.SalarioBase);
+            
+            Desconto desconto = new()
+            {
+                ValorFixo = Math.Round(inssCalculado, 2),
+                TipoDescontoCod = 1, // Substitua pelo código do tipo de desconto apropriado
+            };
+
+            DescontoFuncionario descontoFuncionario = new()
+            {
+                FuncionarioId = funcionario.Id,
+                Desconto = desconto,
+            };
+
+            _context.DescontoFuncionario.Add(descontoFuncionario);
+        }
+
+        _context.SaveChanges();
+    }
+
+    private void RemoverDescontosINSSDeTodosFuncionarios()
+    {
+        var descontosTipo1 = _context.DescontoFuncionario
+            .Where(f => f.Desconto.TipoDescontoCod == 1)
+            .ToList();
+
+        _context.DescontoFuncionario.RemoveRange(descontosTipo1);
+
+        _context.SaveChanges();
+    }
 }
+

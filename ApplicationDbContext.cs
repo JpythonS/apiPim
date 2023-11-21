@@ -18,7 +18,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Usuario> Usuarios { get; set; } = null!;
     public DbSet<Desconto> Descontos { get; set; } = null!;
     public DbSet<Adicional> Adicionais { get; set; } = null!;
-    public DbSet<Pagamento> Pagamento { get; set; } = null!;
+    public DbSet<Pagamento> Pagamentos { get; set; } = null!;
     public DbSet<Funcionario> Funcionarios { get; set; } = null!;
 
     public DbSet<AdicionalPagamento> AdicionalPagamento { get; set; } = null!;
@@ -26,4 +26,18 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<DescontoPagamento> DescontoPagamento { get; set; } = null!;
     public DbSet<DescontoFuncionario> DescontoFuncionario { get; set; } = null!;
+
+    public double CalcularDesconto(double salario)
+    {
+        if (salario <= 1320.00) return salario * 0.075; // 7.5%
+
+        else if (salario <= 2571.29) return salario * 0.09; // 9%
+
+        else if (salario <= 3856.94) return salario * 0.12; // 12%
+
+        else if (salario <= 7507.49) return salario * 0.14; // 14%
+
+        else return salario * 0.14; // 14%
+        
+    }
 }

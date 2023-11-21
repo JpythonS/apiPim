@@ -12,13 +12,15 @@ namespace api_pim.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class EmpresaController : ControllerBase {
+public class EmpresaController : ControllerBase
+{
     private readonly IMapper _mapper;
     private readonly ILogger<EmpresaController> _logger;
 
     private readonly ApplicationDbContext _context;
 
-    public EmpresaController(IMapper mapper, ILogger<EmpresaController> logger, ApplicationDbContext context) {
+    public EmpresaController(IMapper mapper, ILogger<EmpresaController> logger, ApplicationDbContext context)
+    {
         _mapper = mapper;
         _logger = logger;
         _context = context;
@@ -26,7 +28,8 @@ public class EmpresaController : ControllerBase {
 
     [HttpGet]
     [Authorize]
-    public IActionResult Get() {
+    public IActionResult Get()
+    {
         var empresa = _context.Empresas.ToList();
         return Ok(empresa);
     }
@@ -55,4 +58,29 @@ public class EmpresaController : ControllerBase {
             throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CE}]");
         }
     }
+
+
+    [HttpGet("relatorio-funcionarios")]
+    public IActionResult ObterMediaSalarialPorEmpresa()
+    {
+        var resultado = _context.Empresas
+            .Select(e => new MediaSalarialPorEmpresaDto
+            {
+                NomeEmpresa = e.Nome, // Substitua pelo nome da propriedade correta em sua classe Empresa
+                MediaSalarial = e.Funcionarios.Average(f => f.SalarioBase), // Média salarial
+                SomaSalarial = e.Funcionarios.Sum(f => f.SalarioBase), // Soma dos salários
+                QuantidadeFuncionarios = e.Funcionarios.Count() // Contagem de funcionários
+            })
+            .ToList();
+
+        return Ok(resultado);
+    }
+}
+
+public class MediaSalarialPorEmpresaDto
+{
+    public string NomeEmpresa { get; set; } = string.Empty;
+    public double? MediaSalarial { get; set; }
+    public double? SomaSalarial { get; set; }
+    public int? QuantidadeFuncionarios { get; set; }
 }

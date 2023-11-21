@@ -98,13 +98,22 @@ public class FuncionarioController : ControllerBase
             {
                 Id = funcionario.Id,
                 Nome = funcionario.NomeCompleto,
+                DataNascimento = funcionario.DataNascimento,
                 Cpf = funcionario.Cpf,
+                Rg = funcionario.Rg,
+                Celular = funcionario.Celular,
+                CelularContatoEmergencia = funcionario.CelularContatoEmergencia,
+                Bairro = funcionario.Bairro,
+                Cidade = funcionario.Cidade,
+                Estado = funcionario.Estado,
+                Pis = funcionario.Pis,
                 Cargo = funcionario.TipoCargo.Valor,
                 Endereco = funcionario.Endereco,
                 SalarioBase = funcionario.SalarioBase,
                 JornadaTrabalhoSemanal = funcionario.JornadaTrabalhoSemanal,
                 Email = funcionario.Usuario.Email,
-                Empresa = funcionario.Empresa.Nome
+                Empresa = funcionario.Empresa.Nome,
+                NivelPermissao = funcionario.Usuario.TipoUsuario.Valor
             }).ToList();
 
             _logger.LogInformation($"FuncionarioController.Get -> [Success]");
@@ -164,4 +173,64 @@ public class FuncionarioController : ControllerBase
             throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CF}]");
         }
     }
+
+    [HttpPost("atualizar/{id}")]
+    [Authorize]
+    public IActionResult Update(int id, [FromBody] UpdateFuncionarioRequest funcionarioAtualizado)
+    {
+        var funcionarioExistente = _context.Funcionarios.Find(id);
+        if (funcionarioExistente == null) return NotFound("Funcionário não encontrado.");
+
+        if (!string.IsNullOrEmpty(funcionarioAtualizado.Cargo))
+        {
+            var cargo = _context.TipoCargo.Find(int.Parse(funcionarioAtualizado.Cargo));
+            if (cargo == null) return NotFound("Cargo não encontrado.");
+
+            funcionarioExistente.TipoCargo = cargo;
+        }
+
+        if (!string.IsNullOrEmpty(funcionarioAtualizado.Empresa))
+        {
+            var empresa = _context.Empresas.Find(int.Parse(funcionarioAtualizado.Empresa));
+            if (empresa == null) return NotFound("Empresa não encontrada.");
+
+            funcionarioExistente.Empresa = empresa;
+        }
+
+        // Aqui, você pode atualizar apenas as propriedades que foram fornecidas no objeto funcionarioAtualizado.
+
+        if (!string.IsNullOrEmpty(funcionarioAtualizado.NomeCompleto))
+            funcionarioExistente.NomeCompleto = funcionarioAtualizado.NomeCompleto;
+        
+        if (!string.IsNullOrEmpty(funcionarioAtualizado.Endereco))
+            funcionarioExistente.Endereco = funcionarioAtualizado.Endereco;
+
+        if (!string.IsNullOrEmpty(funcionarioAtualizado.Celular))
+            funcionarioExistente.Celular = funcionarioAtualizado.Celular;
+
+        if (!string.IsNullOrEmpty(funcionarioAtualizado.CelularContatoEmergencia))
+            funcionarioExistente.CelularContatoEmergencia = funcionarioAtualizado.CelularContatoEmergencia;
+
+        if (!string.IsNullOrEmpty(funcionarioAtualizado.Bairro))
+            funcionarioExistente.Bairro = funcionarioAtualizado.Bairro;
+
+        if (!string.IsNullOrEmpty(funcionarioAtualizado.Cidade))
+            funcionarioExistente.Cidade = funcionarioAtualizado.Cidade;
+
+        if (!string.IsNullOrEmpty(funcionarioAtualizado.Estado))
+            funcionarioExistente.Estado = funcionarioAtualizado.Estado;
+
+
+        if (!string.IsNullOrEmpty(funcionarioAtualizado.SalarioBase)) 
+            funcionarioExistente.SalarioBase = double.Parse(funcionarioAtualizado.SalarioBase);
+
+
+        if (!string.IsNullOrEmpty(funcionarioAtualizado.JornadaTrabalhoSemanal)) funcionarioExistente.JornadaTrabalhoSemanal = double.Parse(funcionarioAtualizado.JornadaTrabalhoSemanal);
+
+        _context.SaveChanges();
+
+        return Ok("Funcionário atualizado com sucesso.");
+    }
+
+
 }

@@ -12,11 +12,14 @@ public class Pagamento
     public double HorasTrabalhadas { get; set; }
     public double Valor { get; set; }
 
+    [ForeignKey("TipoPagamento")]
+    public int TipoPagamentoCod { get; set; }
+
     [ForeignKey("Funcionario")]
     public int FuncionarioId { get; set; }
 
     public Funcionario Funcionario { get; set; } = null!;
-
+    
     public ICollection<AdicionalPagamento> AdicionalPagamento { get; set;} = null!;
     public ICollection<DescontoPagamento> DescontoPagamento { get; set;} = null!;
 }

@@ -10,5 +10,5 @@ public class Empresa {
     public string Nome {get; set;} = string.Empty;
     public string Cnpj {get; set;} = string.Empty;
 
-    // public ICollection<Funcionario> funcionarios {get; set;} = null!;
+    public ICollection<Funcionario> Funcionarios {get; set;} = null!;
 }
