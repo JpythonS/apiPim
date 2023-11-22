@@ -9,6 +9,7 @@ using api_pim.Exceptions;
 using AutoMapper;
 using System.Net;
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace api_pim.Controllers;
 
@@ -29,25 +30,40 @@ public class PagamentoController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("{id}")]
-    public IActionResult GetPagamentosByFuncionario(int id)
+    [HttpGet]
+    public IActionResult GetPagamentosByFuncionario()
     {
         try
         {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            // Valida e decodifica o token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jsonToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+
+            // Obtém o valor da propriedade 'sub' (ID do usuário)
+            var usuarioId = jsonToken?.Payload["sub"].ToString();
+
+            if (usuarioId == null) {
+                return Unauthorized();
+            }
+
+            int usuarioIdInt = int.Parse(usuarioId);
+
             var pagamentos = _context.Pagamentos
-            .Include(p => p.Funcionario)
-            .ThenInclude(p => p.AdicionalFuncionario)
-            .ThenInclude(ap => ap.Adicional)
-            .ThenInclude(a => a.TipoAdicional)
-            .Include(p => p.Funcionario.DescontoFuncionario)
-            .ThenInclude(dp => dp.Desconto)
-            .ThenInclude(a => a.TipoDesconto)
-            .Where(p => p.FuncionarioId == id)
-            .ToList();
+                .Include(p => p.Funcionario)
+                .ThenInclude(p => p.AdicionalFuncionario)
+                .ThenInclude(ap => ap.Adicional)
+                .ThenInclude(a => a.TipoAdicional)
+                .Include(p => p.Funcionario.DescontoFuncionario)
+                .ThenInclude(dp => dp.Desconto)
+                .ThenInclude(a => a.TipoDesconto)
+                .Where(p => p.Funcionario.UsuarioId == usuarioIdInt)
+                .ToList();
 
             if (!pagamentos.Any())
             {
-                return NotFound($"Nenhum pagamento encontrado para o funcionário com ID {id}");
+                return NotFound($"Nenhum pagamento encontrado para o funcionário com ID {usuarioIdInt}");
             }
 
             // Mapeie os resultados para um formato mais amigável
@@ -60,6 +76,7 @@ public class PagamentoController : ControllerBase
                 {
                     p.Funcionario.Id,
                     p.Funcionario.NomeCompleto,
+                    p.Funcionario.SalarioBase
                     // outras propriedades do funcionário que você deseja incluir
                 },
                 Adicionais = p.Funcionario.AdicionalFuncionario.Select(af => new
