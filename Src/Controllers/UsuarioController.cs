@@ -7,6 +7,7 @@ using api_pim.Exceptions;
 
 using AutoMapper;
 using System.Net;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace api_pim.Controllers;
 
@@ -48,7 +49,7 @@ public class UsuarioController : ControllerBase
                 Email = u.Email,
                 Tipo = u.TipoUsuario.Valor
             }).ToList();
-            
+
             _logger.LogInformation("UsuarioController.Get -> [Success]");
             return Ok(result);
         }
@@ -110,4 +111,46 @@ public class UsuarioController : ControllerBase
             throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.DU}]");
         }
     }
+
+    [HttpPost("trocar-senha")]
+    [Authorize]
+    public async Task<IActionResult> TrocarSenha([FromBody] TrocaSenhaDto trocaSenhaDto)
+    {
+        var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            // Valida e decodifica o token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jsonToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+
+            // Obtém o valor da propriedade 'sub' (ID do usuário)
+            var usuarioId = jsonToken?.Payload["sub"].ToString();
+
+            if (usuarioId == null) {
+                return Unauthorized();
+            }
+
+            int usuarioIdInt = int.Parse(usuarioId);
+
+        var usuario = await _context.Usuarios.FindAsync(usuarioIdInt);
+
+        if (usuario == null)
+        {
+            return NotFound("Usuário não encontrado");
+        }
+
+        // Lógica para verificar a senha antiga antes de permitir a troca de senha
+        if (usuario.Senha != trocaSenhaDto.SenhaAntiga)
+        {
+            return BadRequest("Senha antiga incorreta");
+        }
+
+        // Atualize a senha do usuário
+        usuario.Senha = trocaSenhaDto.NovaSenha;
+
+        // Salve as mudanças no banco de dados
+        await _context.SaveChangesAsync();
+
+        return Ok("Senha trocada com sucesso");
+    }
 }
+
