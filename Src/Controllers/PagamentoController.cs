@@ -102,7 +102,7 @@ public class PagamentoController : ControllerBase
         }
     }
 
-    [HttpGet("gerar-pagamentos")]
+    [HttpPost("gerar-pagamentos")]
     public IActionResult GerarPagamentos()
     {
         var funcionarios = _context.Funcionarios
