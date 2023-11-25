@@ -35,7 +35,7 @@ public class TipoDescontoController : ControllerBase
         catch (Exception)
         {
             _logger.LogError("TipoDescontoController.Get -> [Error]");
-           throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GTD}]");
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GTD}]");
         }
     }
 
@@ -45,15 +45,18 @@ public class TipoDescontoController : ControllerBase
     {
         try
         {
+            var tipoDesconto = _context.TipoDesconto.Where(ta => ta.Valor == request.Valor).FirstOrDefault();
             if (request == null)
-            {
                 return BadRequest(new { message = "Dados do tipo de desconto inválidos." });
-            }
+
+            if (tipoDesconto != null)
+                return Conflict(new { message = "Desconto já existente." });
+
 
             _context.TipoDesconto.Add(request);
             _context.SaveChanges();
             _logger.LogInformation("TipoDescontoController.Get -> [Success]");
-            
+
             return Ok($"Tipo de desconto [{request.Valor}] criado com sucesso");
         }
         catch (Exception)
@@ -65,11 +68,13 @@ public class TipoDescontoController : ControllerBase
 
     [HttpDelete]
     [Authorize]
-    public IActionResult Delete(int cod) {
+    public IActionResult Delete(int cod)
+    {
         try
         {
             var tipoDesconto = _context.TipoDesconto.FirstOrDefault(td => td.Cod == cod);
-            if (tipoDesconto == null) {
+            if (tipoDesconto == null)
+            {
                 return NotFound(new { message = "Tipo de desconto não encontrado" });
             }
 

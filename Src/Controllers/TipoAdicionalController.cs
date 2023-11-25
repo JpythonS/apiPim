@@ -35,7 +35,7 @@ public class TipoAdicionalController : ControllerBase
         catch (Exception)
         {
             _logger.LogError("TipoAdicionalController.Get -> [Error]");
-           throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GTA}]");
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GTA}]");
         }
     }
 
@@ -45,15 +45,17 @@ public class TipoAdicionalController : ControllerBase
     {
         try
         {
+            var tipoAdicional = _context.TipoAdicional.Where(ta => ta.Valor == request.Valor).FirstOrDefault();
             if (request == null)
-            {
                 return BadRequest(new { message = "Dados do tipo de adicional inválidos." });
-            }
+
+            if (tipoAdicional != null)
+                return Conflict(new { message = "Adicional já existente." });
 
             _context.TipoAdicional.Add(request);
             _context.SaveChanges();
             _logger.LogInformation("TipoAdicionalController.Get -> [Success]");
-            
+
             return Ok($"Tipo de cargo [{request.Valor}] criado com sucesso");
         }
         catch (Exception)
@@ -65,11 +67,13 @@ public class TipoAdicionalController : ControllerBase
 
     [HttpDelete]
     [Authorize]
-    public IActionResult Delete(int cod) {
+    public IActionResult Delete(int cod)
+    {
         try
         {
             var tipoAdicional = _context.TipoAdicional.FirstOrDefault(x => x.Cod == cod);
-            if (tipoAdicional == null) {
+            if (tipoAdicional == null)
+            {
                 return NotFound(new { message = "Tipo de adicional não encontrado" });
             }
 
