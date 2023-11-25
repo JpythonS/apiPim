@@ -10,6 +10,8 @@ using System.Net;
 
 using AutoMapper;
 using System.Numerics;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.EntityFrameworkCore;
 
 namespace api_pim.Controllers;
 
@@ -126,6 +128,64 @@ public class FuncionarioController : ControllerBase
         }
     }
 
+    // Rota GET: api/funcionario
+    [HttpGet("perfil")]
+    [Authorize]
+    public IActionResult GetByTokenId()
+    {
+        try
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            // Valida e decodifica o token
+            JwtSecurityTokenHandler tokenHandler = new();
+            var jsonToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
+
+
+            // Obtém o valor da propriedade 'sub' (ID do usuário)
+            var usuarioId = jsonToken?.Payload["sub"].ToString();
+
+            if (usuarioId == null)
+            {
+                return Unauthorized();
+            }
+
+            int usuarioIdInt = int.Parse(usuarioId);
+
+            var result = _context.Funcionarios.AsQueryable()
+            .Where(funcionario => funcionario.Usuario.Id == usuarioIdInt)
+            .Select(funcionario => new FuncionarioDto
+            {
+                Id = funcionario.Id,
+                Nome = funcionario.NomeCompleto,
+                DataNascimento = funcionario.DataNascimento,
+                Cpf = funcionario.Cpf,
+                Rg = funcionario.Rg,
+                Celular = funcionario.Celular,
+                CelularContatoEmergencia = funcionario.CelularContatoEmergencia,
+                Bairro = funcionario.Bairro,
+                Cidade = funcionario.Cidade,
+                Estado = funcionario.Estado,
+                Pis = funcionario.Pis,
+                Cargo = funcionario.TipoCargo.Valor,
+                Endereco = funcionario.Endereco,
+                SalarioBase = funcionario.SalarioBase,
+                JornadaTrabalhoSemanal = funcionario.JornadaTrabalhoSemanal,
+                Email = funcionario.Usuario.Email,
+                Empresa = funcionario.Empresa.Nome,
+                NivelPermissao = funcionario.Usuario.TipoUsuario.Valor
+            }).First();
+
+            _logger.LogInformation($"FuncionarioController.GetByTokenId -> [Success]");
+            return Ok(result);
+        }
+        catch (Exception)
+        {
+            _logger.LogError("FuncionarioController.GetByTokenId -> [Error]");
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.GF}]");
+        }
+    }
+
     // POST: api/funcionario
     [HttpPost]
     [Authorize]
@@ -201,7 +261,7 @@ public class FuncionarioController : ControllerBase
 
         if (!string.IsNullOrEmpty(funcionarioAtualizado.NomeCompleto))
             funcionarioExistente.NomeCompleto = funcionarioAtualizado.NomeCompleto;
-        
+
         if (!string.IsNullOrEmpty(funcionarioAtualizado.Endereco))
             funcionarioExistente.Endereco = funcionarioAtualizado.Endereco;
 
@@ -221,7 +281,7 @@ public class FuncionarioController : ControllerBase
             funcionarioExistente.Estado = funcionarioAtualizado.Estado;
 
 
-        if (!string.IsNullOrEmpty(funcionarioAtualizado.SalarioBase)) 
+        if (!string.IsNullOrEmpty(funcionarioAtualizado.SalarioBase))
             funcionarioExistente.SalarioBase = double.Parse(funcionarioAtualizado.SalarioBase);
 
 
