@@ -292,5 +292,37 @@ public class FuncionarioController : ControllerBase
         return Ok("Funcionário atualizado com sucesso.");
     }
 
+    [HttpPost("adicionais")]
+    public IActionResult VincularAdicional([FromBody]   VincularAdicionalRequest adicional)
+    {
+        try
+        {
+            // Encontrar o funcionário pelo número da matrícula
+            var funcionario = _context.Funcionarios.Find(adicional.FuncionarioId);
+
+            if (funcionario == null)
+            {
+                return NotFound($"Funcionário com matrícula {adicional.FuncionarioId} não encontrado.");
+            }
+            AdicionalFuncionario adicionalFuncionario = new()
+            {
+                FuncionarioId = adicional.FuncionarioId,
+                AdicionalId = adicional.AdicionalId
+
+            };
+            // Adicionar o adicional ao funcionário
+            funcionario.AdicionalFuncionario.Add(adicionalFuncionario);
+
+            _context.SaveChanges();
+
+            return Ok($"Adicional adicionado com sucesso ao funcionário {adicional.FuncionarioId}.");
+        }
+        catch (Exception)
+        {
+            _logger.LogError("FuncionarioController.VincularAdicional -> [Error]");
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CF}]");
+        }
+    }
+
 
 }

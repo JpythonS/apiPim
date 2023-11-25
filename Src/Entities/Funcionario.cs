@@ -59,7 +59,7 @@ public class Funcionario
 
     public Empresa Empresa { get; set; } = null!;
 
-    public ICollection<AdicionalFuncionario> AdicionalFuncionario { get; set;} = null!;
-    public ICollection<DescontoFuncionario> DescontoFuncionario { get; set;} = null!;
+    public ICollection<AdicionalFuncionario> AdicionalFuncionario { get; set;} = new List<AdicionalFuncionario>();
+    public ICollection<DescontoFuncionario> DescontoFuncionario { get; set;} = new List<DescontoFuncionario>();
 
 }
