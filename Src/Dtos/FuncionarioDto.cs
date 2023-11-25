@@ -1,3 +1,5 @@
+namespace api_pim.Models;
+
 public struct FuncionarioDto {
     public int Id {get; set;}
     public string Nome { get; set;}
