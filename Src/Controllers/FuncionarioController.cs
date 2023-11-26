@@ -293,21 +293,36 @@ public class FuncionarioController : ControllerBase
     }
 
     [HttpPost("adicionais")]
-    public IActionResult VincularAdicional([FromBody]   VincularAdicionalRequest adicional)
+    public IActionResult VincularAdicional([FromBody] VincularAdicionalRequest request)
     {
         try
         {
+            // Criação do objeto Adicional
+            Adicional novoAdicional = new()
+            {
+                TipoAdicionalCod = request.TipoAdicionalCod,
+                ValorFixo = request.ValorFixo
+            };
+
+            // Adiciona o novo Adicional ao contexto do banco de dados
+            _context.Adicionais.Add(novoAdicional);
+
+            // Salva as alterações para obter o ID gerado para o novo Adicional
+            _context.SaveChanges();
+
+            int novoAdicionalId = novoAdicional.Id;
+
             // Encontrar o funcionário pelo número da matrícula
-            var funcionario = _context.Funcionarios.Find(adicional.FuncionarioId);
+            var funcionario = _context.Funcionarios.Find(request.FuncionarioId);
 
             if (funcionario == null)
             {
-                return NotFound($"Funcionário com matrícula {adicional.FuncionarioId} não encontrado.");
+                return NotFound($"Funcionário com matrícula {request.FuncionarioId} não encontrado.");
             }
             AdicionalFuncionario adicionalFuncionario = new()
             {
-                FuncionarioId = adicional.FuncionarioId,
-                AdicionalId = adicional.AdicionalId
+                FuncionarioId = request.FuncionarioId,
+                AdicionalId = novoAdicionalId
 
             };
             // Adicionar o adicional ao funcionário
@@ -315,7 +330,54 @@ public class FuncionarioController : ControllerBase
 
             _context.SaveChanges();
 
-            return Ok($"Adicional adicionado com sucesso ao funcionário {adicional.FuncionarioId}.");
+            return Ok($"Adicional adicionado com sucesso ao funcionário {request.FuncionarioId}.");
+        }
+        catch (Exception)
+        {
+            _logger.LogError("FuncionarioController.VincularAdicional -> [Error]");
+            throw new ApiException((int)HttpStatusCode.InternalServerError, $"Erro interno [{ErrorCode.CF}]");
+        }
+    }
+
+    [HttpPost("descontos")]
+    public IActionResult VincularDesconto([FromBody] VincularDescontoRequest request)
+    {
+        try
+        {
+            // Criação do objeto Desconto
+            Desconto novoDesconto = new()
+            {
+                TipoDescontoCod = request.TipoDescontoCod,
+                ValorFixo = request.ValorFixo
+            };
+
+            // Adiciona o novo Desconto ao contexto do banco de dados
+            _context.Descontos.Add(novoDesconto);
+
+            // Salva as alterações para obter o ID gerado para o novo Desconto
+            _context.SaveChanges();
+
+            int novoDescontoId = novoDesconto.Id;
+
+            // Encontrar o funcionário pelo número da matrícula
+            var funcionario = _context.Funcionarios.Find(request.FuncionarioId);
+
+            if (funcionario == null)
+            {
+                return NotFound($"Funcionário com matrícula {request.FuncionarioId} não encontrado.");
+            }
+            DescontoFuncionario descontoFuncionario = new()
+            {
+                FuncionarioId = request.FuncionarioId,
+                DescontoId = novoDescontoId
+
+            };
+            // Adicionar o Desconto ao funcionário
+            funcionario.DescontoFuncionario.Add(descontoFuncionario);
+
+            _context.SaveChanges();
+
+            return Ok($"Adicional adicionado com sucesso ao funcionário {request.FuncionarioId}.");
         }
         catch (Exception)
         {

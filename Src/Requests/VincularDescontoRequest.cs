@@ -2,7 +2,7 @@ namespace api_pim.Models;
 
 using System.ComponentModel.DataAnnotations;
 
-public class VincularAdicionalRequest
+public class VincularDescontoRequest
 {
     [Required]
     public int FuncionarioId { get; set; }
@@ -12,5 +12,5 @@ public class VincularAdicionalRequest
     public double ValorFixo { get; set; }
 
     [Required]
-    public int TipoAdicionalCod { get; set; }
+    public int TipoDescontoCod { get; set; }
 }

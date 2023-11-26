@@ -19,6 +19,6 @@ public class Adicional
 
     // public ICollection<Pagamento>? Pagamentos { get; set; } 
     // public List<Funcionario> Funcionario { get; } = new();
-    public ICollection<AdicionalFuncionario> AdicionalFuncionario { get; set;} = null!;
+    public ICollection<AdicionalFuncionario> AdicionalFuncionario { get; set; } = new List<AdicionalFuncionario>();
 
 }
